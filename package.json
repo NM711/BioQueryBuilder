@@ -1,0 +1,14 @@
+{
+  "name": "pg_wrapper",
+  "version": "1.0.0",
+  "description": "Postgresql wrapper for nodejs",
+  "main": "index.js",
+  "author": "NM711",
+  "license": "MIT",
+  "scripts": {"start": "npx tsx index.ts"},
+  "dependencies": {
+    "@types/pg": "^8.10.7",
+    "dotenv": "^16.3.1",
+    "pg": "^8.11.3"
+  }
+}
