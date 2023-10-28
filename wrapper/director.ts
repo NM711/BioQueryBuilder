@@ -1,4 +1,5 @@
 import SelectQueryBuilder from "builders/select"
+import InsertQueryBuilder from "builders/insert"
 import BioWrapperExecutor from "./executor"
 import type { Client } from "pg"
 import type NBioWrapper from "types/bioWrapper.types"
@@ -19,7 +20,7 @@ class BioWrapper implements NBioWrapper.WrapperBuilderDirector {
   } 
 
   setInsert(table: string): WrapperBuilders.InsertQueryBuilderInterface {
-    return
+    return new InsertQueryBuilder(table)
   }
 
   setUpdate(table: string): WrapperBuilders.UpdateQueryBuilderInterface {

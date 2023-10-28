@@ -39,10 +39,10 @@ namespace WrapperBuilders {
     setValue (value: any): this
   }
 
-  export interface InsertQueryBuilderInterface {
-    setInsertColumn (column: string): this
+  export interface InsertQueryBuilderInterface extends SetConditionsAndValuesInterface {
+    setColumn (column: string): this
     // returnings can include WHERE clauses, ORDER BY and thats it I believe
-    setReturning (column: string): this
+    setReturning (...columns: string[]): this
     build (): WrapperUtils.QueryAndValues
   }
 
@@ -51,12 +51,15 @@ namespace WrapperBuilders {
     setJoin ({ joinOperator, table, condition, operator }: WrapperUtils.BuildQueryJoin): this
     setOrder (columns: string[], order: SQLTypes.SQLOrderByOperators): this
     setGroup (...columns: string[]): this
+    setLimit (limit: number): this
+    setOffset (offset: number): this
     setHavingCondition ({ condition, operator, separator }: WrapperUtils.Conditions): this
     build (): WrapperUtils.QueryAndValues
   }
 
-  export interface UpdateQueryBuilderInterface extends SetConditionsAndValuesInterface{
-    setReturning (column: string): this
+  export interface UpdateQueryBuilderInterface extends SetConditionsAndValuesInterface {
+    setColumn (column: string): this
+    setReturning (...columns: string[]): this
     build (): WrapperUtils.QueryAndValues
   }
 }
