@@ -5,7 +5,9 @@
   "main": "index.js",
   "author": "NM711",
   "license": "MIT",
-  "scripts": {"start": "npx tsx index.ts"},
+  "scripts": {
+    "start": "npx tsx index.ts"
+  },
   "dependencies": {
     "@types/pg": "^8.10.7",
     "dotenv": "^16.3.1",

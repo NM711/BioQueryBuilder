@@ -1,13 +1,13 @@
-import type { WrapperBuilders, WrapperUtils } from "./sql.types"
+import type WrapperBuilders from "./builders.types"
+import type WrapperUtils from "./utils.types"
 
 namespace NBioWrapper {
 
   export interface WrapperBuilderDirector {
-    setSelect(table: string): WrapperBuilders.SelectQueryBuilderInterface
-    setInsert(table: string): WrapperBuilders.InsertQueryBuilderInterface
-    setUpdate(table: string):  WrapperBuilders.UpdateQueryBuilderInterface
-    setCustom (query: string, ...values: any[]): WrapperUtils.QueryAndValues
-    disconnect (): Promise<void>
+    select(table: string): WrapperBuilders.SelectQueryBuilderInterface
+    insert(table: string): WrapperBuilders.InsertQueryBuilderInterface
+    update(table: string):  WrapperBuilders.UpdateQueryBuilderInterface
+    raw(query: string, ...values: any[]): WrapperUtils.QueryAndValues
     runner: WrapperExecutor
   }
 

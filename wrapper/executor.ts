@@ -1,12 +1,20 @@
 import type NBioWrapper from "types/bioWrapper.types";
 import type { Client } from "pg";
-import {WrapperUtils} from "types/sql.types";
+import type WrapperUtils from "types/utils.types";
 
 class BioWrapperExecutor implements NBioWrapper.WrapperExecutor {
   private client: Client
 
   constructor (client: Client) {
     this.client = client
+  }
+
+  private async disconnect(): Promise<void> {
+    await this.client.end()
+  }
+
+  private async connect():Promise<void> {
+    await this.client.connect()
   }
 
   async transaction(cb: () => Promise<any>): Promise<any> {
@@ -24,6 +32,8 @@ class BioWrapperExecutor implements NBioWrapper.WrapperExecutor {
 
   async execute(qV: WrapperUtils.QueryAndValues | WrapperUtils.QueriesAndValues): Promise<any> {
     try {
+
+      await this.connect()
       // we are gonna check for any returned values, and give them to the user so he can do whatever with them after execution
       const returnQuery = async (query: string, values: any[]): Promise<any> => {
         const returned = await this.client.query(query, values)
@@ -41,8 +51,11 @@ class BioWrapperExecutor implements NBioWrapper.WrapperExecutor {
       } else return await returnQuery(qV.query, qV.values)
     } catch (e) {
       throw e
+    } finally {
+      await this.disconnect()
     }
   }
+
 }
 
 export default BioWrapperExecutor

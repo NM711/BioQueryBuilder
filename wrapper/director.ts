@@ -1,42 +1,36 @@
-import SelectQueryBuilder from "builders/select"
-import InsertQueryBuilder from "builders/insert"
 import BioWrapperExecutor from "./executor"
+import SelectQueryBuilder from "builders/select"
 import type { Client } from "pg"
 import type NBioWrapper from "types/bioWrapper.types"
-import type { WrapperBuilders, WrapperUtils } from "types/sql.types"
-
+import type WrapperBuilders from "types/builders.types"
+import type WrapperUtils from "types/utils.types"
 class BioWrapper implements NBioWrapper.WrapperBuilderDirector {
-  client: Client
-  runner: NBioWrapper.WrapperExecutor
+  executor: BioWrapperExecutor
 
   constructor (client: Client) {
-    this.client = client
-    this.client.connect()
-    this.runner = new BioWrapperExecutor(client)
+    this.executor = new BioWrapperExecutor(client)
   }
 
-  setSelect(table: string): WrapperBuilders.SelectQueryBuilderInterface {
-    return new SelectQueryBuilder(table)
+  select(table: string): WrapperBuilders.SelectQueryBuilderInterface {
+    return new SelectQueryBuilder(table, this.executor)
   } 
 
-  setInsert(table: string): WrapperBuilders.InsertQueryBuilderInterface {
-    return new InsertQueryBuilder(table)
+  insert(table: string): WrapperBuilders.InsertQueryBuilderInterface {
+    return 
   }
 
-  setUpdate(table: string): WrapperBuilders.UpdateQueryBuilderInterface {
+  update(table: string): WrapperBuilders.UpdateQueryBuilderInterface {
     return 
   } 
 
-  setCustom(query: string, ...values: any[]): WrapperUtils.QueryAndValues {
+  raw(query: string, ...values: any[]): WrapperUtils.QueryAndValues {
     return {
       query,
       values
     }
   }
-
-  async disconnect(): Promise<void> {
-    await this.client.end()
-  }
 }
+
+
 
 export default BioWrapper
