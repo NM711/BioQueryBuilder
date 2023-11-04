@@ -1,8 +1,8 @@
 import type SQLTypes from "./sql.types"
 
 namespace WrapperUtils {
-  export interface ColumnAndValue {
-    column: string
+  export interface ColumnAndValue<Column = string> {
+    column: Column
     value: any
   }
 
@@ -14,8 +14,8 @@ namespace WrapperUtils {
   export type QueriesAndValues = QueryAndValues[]
   
 
-  export interface Condition {
-    field: string
+  export interface Condition<Column = string> {
+    column: Column
     operator: SQLTypes.SQLConditionOperator
     value: any
     seperator?: SQLTypes.SQLSeperationOperators[]
@@ -35,8 +35,8 @@ namespace WrapperUtils {
   }
 
 
-  export interface ConditionBuilderOptions {
-    condition: Condition | Condition[]
+  export interface ConditionBuilderOptions<Column> {
+    condition: Condition<Column> | Condition<Column>[]
     conditionType: SQLTypes.ConditionType
     ingredientProp: "wheres" | "havings"
   }

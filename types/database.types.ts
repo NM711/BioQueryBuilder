@@ -4,8 +4,24 @@
 */
 
 namespace DatabaseTypes {
-  interface Database {
   
+  interface TestDataTable {
+    id: string
+    int_field: number
+    int_text: string
+    int_text2: string
+  }
+
+  interface HelloTable {
+    txt: string
+    num: number
+  }
+
+  export interface Database {
+    test_data: TestDataTable
+    hello: HelloTable
   }
 
 }
+
+export default DatabaseTypes

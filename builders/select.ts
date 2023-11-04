@@ -7,23 +7,25 @@ import BuilderUtils from "./util";
 // AN ORDER CANT GO BEFORE A CONDITION AND A JOIN CANT GO AFTER A CONDITION
 // error handle so everything is done in order tbh
 
-class SelectQueryBuilder extends BuilderUtils implements WrapperBuilders.SelectQueryBuilderInterface {
+class SelectQueryBuilder<Table, Column>
+extends BuilderUtils
+implements WrapperBuilders.SelectQueryBuilderInterface<Table, Column> {
 
   constructor (table: string, executor: BioWrapperExecutor) {
     super(table, executor)
   }
 
-  column(...columns: string[]): this {
+  column(...columns: Column[]): this {
     this.ingredients.columns = columns.join(", ")
     return this
   }
 
-  where(condition: WrapperUtils.Condition | WrapperUtils.Condition[]): this {
+  where(condition: WrapperUtils.Condition<Column> | WrapperUtils.Condition<Column>[]): this {
     this.buildCondition({ condition, conditionType: "WHERE", ingredientProp: "wheres" })
     return this
   }
 
-  distinctOn(...column: string[]): this {
+  distinctOn(...column: Column[] | string[]): this {
     this.ingredients.distinct = `DISTINCT ON (${column.join(", ")})`
     return this
   }
@@ -68,7 +70,7 @@ class SelectQueryBuilder extends BuilderUtils implements WrapperBuilders.SelectQ
     return this
   }
 
-  having(condition: WrapperUtils.Condition | WrapperUtils.Condition[]): this {
+  having(condition: WrapperUtils.Condition<Column> | WrapperUtils.Condition<Column>[]): this {
     this.buildCondition({ condition, conditionType: "WHERE", ingredientProp: "havings" })
     return this
   }
