@@ -1,11 +1,6 @@
 import type SQLTypes from "./sql.types"
 
 namespace WrapperUtils {
-  export interface ColumnAndValue<Column = string> {
-    column: Column
-    value: any
-  }
-
   export interface QueryAndValues {
     query: string,
     values: any[]
@@ -31,6 +26,7 @@ namespace WrapperUtils {
     orderBy: string | null
     limit: string | null
     offset: string | null
+    insertValues: string | null
     [key: string]: string | string[] | null
   }
 
