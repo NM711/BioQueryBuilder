@@ -32,7 +32,6 @@ class BioWrapperExecutor implements NBioWrapper.WrapperExecutor {
 
   async execute(qV: WrapperUtils.QueryAndValues | WrapperUtils.QueriesAndValues): Promise<any> {
     try {
-
       await this.connect()
       // we are gonna check for any returned values, and give them to the user so he can do whatever with them after execution
       const returnQuery = async (query: string, values: any[]): Promise<any> => {

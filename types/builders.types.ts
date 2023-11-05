@@ -1,39 +1,58 @@
 import type SQLTypes from "./sql.types"
 import type WrapperUtils from "./utils.types"
+import type NBioWrapper from "./bioWrapper.types"
+
+/**
+* @namespace WrapperBuilders
+*
+* */
 
 namespace WrapperBuilders {
-    
-  export interface Joins {
-    // looks like bloat I know but, I want descriptive methods
-    innerJoin(table: string, c1: string, c2: string): this
-    fullOuterJoin(table: string, c1: string, c2: string): this
-    leftJoin(table: string, c1: string, c2: string): this
-    rightJoin(table: string, c1: string, c2: string): this
-    fullJoin(table: string, c1: string, c2: string): this
+  
+  export interface Joins<Database> {
+
+    innerJoin
+    <JoinTable extends Extract<keyof Database, string>, JoinColumn = NBioWrapper.SpecificTableColumn<Database, JoinTable>>
+    (table: JoinTable, c1: JoinColumn, c2: string): this
+
+
+    fullOuterJoin
+    <JoinTable extends Extract<keyof Database, string>, JoinColumn = NBioWrapper.SpecificTableColumn<Database, JoinTable>>
+    (table: JoinTable, c1: JoinColumn, c2: string): this
+
+
+    leftJoin
+    <JoinTable extends Extract<keyof Database, string>, JoinColumn = NBioWrapper.SpecificTableColumn<Database, JoinTable>>
+    (table: JoinTable, c1: JoinColumn, c2: string): this
+
+
+    rightJoin
+    <JoinTable extends Extract<keyof Database, string>, JoinColumn = NBioWrapper.SpecificTableColumn<Database, JoinTable>>
+    (table: JoinTable, c1: JoinColumn, c2: string): this
+
+
+    fullJoin
+    <JoinTable extends Extract<keyof Database, string>, JoinColumn = NBioWrapper.SpecificTableColumn<Database, JoinTable>>
+    (table: JoinTable, c1: JoinColumn, c2: string): this
   }
 
-  export interface ExecutorAndCondition<Column = string> {
+  export interface CommonUtils<Column = string> {
     where(condition: WrapperUtils.Condition<Column> | WrapperUtils.Condition<Column>[]): this
-    returning?(...columns: string[]): this
+    returning?(...columns: Column[]): this
     execute(): Promise<any>
   }
 
-  export interface InsertAndUpdateValues<Column = string> {
-    setValues(values: WrapperUtils.ColumnAndValue<Column>[]): this
-  }
-
-  export interface SelectAndDeleteColumn<Column = string> {
-    column(...columns: Column[]): this
+  export interface InsertAndUpdateValues {
+    insertValues(...values: string[]): this
   }
 
   // still need subqueries and CTEs
   
-  // <Table, Column extends keyof Table> we essentially destruct the key as Column from the selected table
-  export interface SelectQueryBuilderInterface<Table, Column>
+  export interface SelectQueryBuilderInterface<Table, Column, Database>
   extends 
-  SelectAndDeleteColumn<Column>,
-  Joins,
-  ExecutorAndCondition<Column> {
+  Joins<Database>,
+  Omit<CommonUtils<Column>, "returning()"> {
+    column(...columns: Column[]): this
     distinctOn(...column: Column[] | string[]): this
     orderBy (columns: Column[] | string[], order: SQLTypes.SQLOrderByOperators): this
     groupBy (...columns: Column[] | string[]): this
@@ -42,17 +61,28 @@ namespace WrapperBuilders {
     offset (offset: number): this
   }
 
-  export interface DeleteQueryBuilderInterface extends SelectAndDeleteColumn, ExecutorAndCondition {
+  export interface DeleteQueryBuilderInterface<Table, Column> 
+  extends 
+  CommonUtils<Column> {
+    column(...columns: Column[]): this
   }
 
-  export interface InsertQueryBuilderInterface<Column> extends InsertAndUpdateValues<Column>, ExecutorAndCondition {
+  export interface InsertQueryBuilderInterface<Table, Column> 
+  extends
+  InsertAndUpdateValues,
+  Omit<CommonUtils<Column>, "where()"> {
+    column(...columns: Column[]): this
   }
 
-  export interface UpdateQueryBuilderInterface<Column> extends InsertAndUpdateValues<Column>, ExecutorAndCondition {
+  export interface UpdateQueryBuilderInterface<Table, Column>
+  extends
+  InsertAndUpdateValues,
+  CommonUtils<Column> {
+    column(...columns: Column[]): this
   }
 
-  export interface BuilderUtils {
-    buildCondition(options: WrapperUtils.ConditionBuilderOptions): this
+  export interface BuilderUtils<Column> {
+    buildCondition(options: WrapperUtils.ConditionBuilderOptions<Column>): this
   }
 }
 

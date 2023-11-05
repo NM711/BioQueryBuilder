@@ -1,25 +1,30 @@
 import type WrapperBuilders from "./builders.types"
 import type WrapperUtils from "./utils.types"
-
 namespace NBioWrapper {
+
+  export type AllColumns<DB> = {
+    [Table in keyof DB]: `${Table & string}.${keyof DB[Table] & string}`
+  }[keyof DB]
+
+  export type SpecificTableColumn<DB, Table extends keyof DB> = `${Table & string}.${keyof DB[Table] & string}`
+
   export interface WrapperBuilderDirector<Database = void> {
-    // after type system completion, overload the methods that require types so that they only take type string
-    // this is just in case a developer or someone doesnt feel like declaring his database types.
-    select <Table extends Extract<keyof Database, string>, Column extends keyof Database[Table]> 
+
+    select <Table extends Extract<keyof Database, string>, Column = keyof AllColumns<Database>> 
     (table: Table):
-    WrapperBuilders.SelectQueryBuilderInterface<Column>
+    Omit<WrapperBuilders.SelectQueryBuilderInterface<Table, Column, Database>, "returning">
     
 
     insert
-    <Table extends Extract<keyof Database, string>, Column extends keyof Table>
+    <Table extends Extract<keyof Database, string>, Column extends keyof Database[Table]>
     (table: Table):
-    WrapperBuilders.InsertQueryBuilderInterface
+    WrapperBuilders.InsertQueryBuilderInterface<Table, Column>
 
 
     update 
-    <Table extends Extract<keyof Database, string>, Column extends keyof Table>
+    <Table extends Extract<keyof Database, string>, Column extends keyof Database[Table]>
     (table: Table):
-    WrapperBuilders.UpdateQueryBuilderInterface
+    WrapperBuilders.UpdateQueryBuilderInterface<Table, Column>
     raw(query: string, ...values: any[]): WrapperUtils.QueryAndValues
   }
 
