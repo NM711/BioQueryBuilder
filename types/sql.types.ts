@@ -1,14 +1,24 @@
+/**
+ * @namespace SQLTypes
+ * Namespace for defining custom TypeScript types related to SQL operations.
+ */
 namespace SQLTypes {
-  export type SQLConditionOperator = "=" | ">" | "<" | ">=" | "<=" | "<>" | "!=" | "LIKE" | "IN" | "BETWEEN"
+   
+  /** @type SQLConditionOperator Represents various SQL condition operators. */
+  export type SQLConditionOperator = "=" | ">" | "<" | ">=" | "<=" | "<>" | "LIKE" | "IN" | "BETWEEN";
 
-  export type SQLSeperationOperators = "AND" | "OR" | "NOT"
+  /** @type SQLSeperationOperators Defines SQL separation operators for combining conditions. */
+  export type SQLSeperationOperators = "AND" | "OR" | "NOT";
 
-  export type ConditionType = "HAVING" | "WHERE"
+  /** @type ConditionType Represents condition types in SQL. */
+  export type ConditionType = "HAVING" | "WHERE";
 
-  export type SQLJoinOperators = "INNER" | "LEFT" | "RIGHT" | "FULL" | "FULL OUTER" | "SELF"
+  /** @type SQLJoinOperators Defines SQL join operators for combining tables. */
+  export type SQLJoinOperators = "INNER" | "LEFT" | "RIGHT" | "FULL" | "FULL OUTER" | "SELF";
 
-  // ORDER BY category ASC, price DESC
-  export type SQLOrderByOperators = "ASC" | "DESC"
+  /** @type SQLOrderByOperators Represents sorting operators for SQL's "ORDER BY" clause. */
+  export type SQLOrderByOperators = "ASC" | "DESC";
 }
 
-export default SQLTypes
+export default SQLTypes;
+

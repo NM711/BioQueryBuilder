@@ -2,36 +2,12 @@ import BioWrapperExecutor from "wrapper/executor"
 import type WrapperBuilders from "types/builders.types"
 import type WrapperUtils from "types/utils.types"
 
+
 /**
- *
- * @class BuilderUtils - Reusable Builder Class Utils For All Query Builders
- * @template <Column> - Generic type that expects columns from the declared Database Tables interface, depending on the builder
- * these columns can be of ALL tables or Specified tables
- *
- * @method buildCondition
- * @param options
- * @type WrapperUtils.ConditionBuilderOptions<Column>
- * Reusable method meant to generate conditions for the SQL WHERE clause or HAVING clause, it takes a parameter of options
- * which is supposed to implement an interface with the given generic <Column> data.
- *
- * @method column
- * @param ...options
- * @type Column[]
- * This method is meant to set the columns for a given sql query depending on what the value of the passed generic <Column> type is.
- * For example a basic INSERT SQL Query would look like: INSERT INTO "table" (col1, col2, col3) VALUES ($1, $2, $3);
- * Another example could be of a basic SELECT SQL query: SELECT (col1, col2, col3) FROM "table";
- *
- * @method where
- * @param condition
- * @type WrapperUtils.Condition<Column>
- * @type WrapperUtils.Condition<Column>[]
- * This is method is to reuse and construct a WHERE sql clause across all builders, this is because it exists in almost every type of SQL
- * operation except the standalone INSERT.
- * The method takes a condition or conditions of a implemented interface which takes a generic type of Column, this information
- * is useful to the interface because then when I need to do something like "SELECT * FROM TABLE WHERE column = 'HI'" we know what columns
- * are available to us in that instance.
- *
- */
+ * @class BuilderUtils Reusable Builder Class Utils For All Query Builders
+ * @template <Column> Generic type that expects columns from the declared Database Tables interface, depending on the builder
+ * these columns can be of ALL tables or Specified tables 
+ **/
 
 class BuilderUtils<Column> implements WrapperBuilders.BuilderUtils<Column> {
   protected table: string
@@ -58,6 +34,15 @@ class BuilderUtils<Column> implements WrapperBuilders.BuilderUtils<Column> {
     this.values = []
     this.paramCounter = 0
   }
+
+ /**
+  * @method buildCondition
+  * @param options
+  * @type WrapperUtils.ConditionBuilderOptions<Column>
+  * @description
+  * Reusable method meant to generate conditions for the SQL WHERE clause or HAVING clause, it takes a parameter of options
+  * which is supposed to implement an interface with the given generic <Column> data.
+  **/
 
   public buildCondition(options: WrapperUtils.ConditionBuilderOptions<Column>): this {
     const savedConditions: string[] = []
@@ -86,10 +71,33 @@ class BuilderUtils<Column> implements WrapperBuilders.BuilderUtils<Column> {
     return this
   }
 
+ /**
+ * @method column
+ * @param ...options
+ * @type Column[]
+ * @description
+ * This method is meant to set the columns for a given sql query depending on what the value of the passed generic <Column> type is.
+ * For example a basic INSERT SQL Query would look like: INSERT INTO "table" (col1, col2, col3) VALUES ($1, $2, $3);
+ * Another example could be of a basic SELECT SQL query: SELECT (col1, col2, col3) FROM "table";
+ **/
+
   public column(...columns: Column[]): this {
     this.ingredients.columns = `(${columns.join(", ")})`
     return this
   }
+
+  /**
+ * @method where
+ * @param condition
+ * @type WrapperUtils.Condition<Column>
+ * @type WrapperUtils.Condition<Column>[]
+ * @description 
+ * This is method is to reuse and construct a WHERE sql clause across all builders, this is because it exists in almost every type of SQL
+ * operation except the standalone INSERT.
+ * The method takes a condition or conditions of a implemented interface which takes a generic type of Column, this information
+ * is useful to the interface because then when I need to do something like "SELECT * FROM TABLE WHERE column = 'HI'" we know what columns
+ * are available to us in that instance.
+ **/
 
   public where(condition: WrapperUtils.Condition<Column> | WrapperUtils.Condition<Column>[]): this {
     this.buildCondition({ condition, conditionType: "WHERE", ingredientProp: "wheres" })
