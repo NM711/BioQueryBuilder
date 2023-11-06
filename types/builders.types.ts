@@ -2,13 +2,21 @@ import type SQLTypes from "./sql.types"
 import type WrapperUtils from "./utils.types"
 import type NBioWrapper from "./bioWrapper.types"
 
-/**
-* @namespace WrapperBuilders
-*
-* */
+ /**
+  * @namespace WrapperBuilders
+  * @description
+  * This namespace contains a set of interfaces for building SQL queries in a strongly typed manner.
+  **/
 
 namespace WrapperBuilders {
   
+  /**
+   * @interface Joins
+   * @description
+   * This interface provides methods for defining various types of SQL joins, including inner, outer, left, right, and full joins.
+   * @typeParam Database - The database schema.
+   **/
+
   export interface Joins<Database> {
 
     innerJoin
@@ -36,22 +44,81 @@ namespace WrapperBuilders {
     (table: JoinTable, c1: JoinColumn, c2: string): this
   }
 
+  /**
+   * @interface CommonUtils
+   * @description
+   * This interface provides common query building methods like 'where,' 'returning,' and 'execute.'
+   * @typeParam Column - The type of column.
+   **/
+
   export interface CommonUtils<Column = string> {
+    
+    /**
+     * @method where
+     * @description
+     * Specifies a WHERE condition for the query.
+     * @param condition - The WHERE condition to apply.
+     * @returns This query builder instance.
+     **/
+
     where(condition: WrapperUtils.Condition<Column> | WrapperUtils.Condition<Column>[]): this
+    
+    /**
+     * @method returning
+     * @description
+     * Specifies the columns to return in the query.
+     * @param columns - The columns to return.
+     * @returns This query builder instance.
+     **/
+
     returning?(...columns: Column[]): this
+    
+    /**
+     * @method execute
+     * @description
+     * Executes the query and returns a Promise for the result.
+     * @returns A Promise with the query result.
+     **/
+
     execute(): Promise<any>
   }
 
+  /**
+   * @interface InsertAndUpdateValues
+   * @description
+   * This interface provides methods for inserting and updating values in queries.
+   **/
+
   export interface InsertAndUpdateValues {
+
+    /**
+     * @method insertValues
+     * @description
+     * Specifies values to be inserted in the query.
+     * @param values - The values to insert.
+     * @returns This query builder instance.
+     */
+
     insertValues(...values: string[]): this
   }
 
   // still need subqueries and CTEs
-  
+ 
+
+  /**
+   * @interface SelectQueryBuilderInterface
+   * @description
+   * This interface is used for building SELECT queries and includes methods for defining columns, distinct, ordering, grouping, and more.
+   * @typeParam Table - The table to select from.
+   * @typeParam Column - The type of column.
+   * @typeParam Database - The database schema.
+   **/
+
   export interface SelectQueryBuilderInterface<Table, Column, Database>
   extends 
   Joins<Database>,
   Omit<CommonUtils<Column>, "returning()"> {
+    // inner workings still need to be documented
     column(...columns: Column[]): this
     distinctOn(...column: Column[] | string[]): this
     orderBy (columns: Column[] | string[], order: SQLTypes.SQLOrderByOperators): this
@@ -61,11 +128,27 @@ namespace WrapperBuilders {
     offset (offset: number): this
   }
 
+  /**
+   * @interface DeleteQueryBuilderInterface
+   * @description
+   * This interface is used for building DELETE queries and includes methods for specifying columns to delete.
+   * @typeParam Table - The table to delete from.
+   * @typeParam Column - The type of column.
+   **/
+
   export interface DeleteQueryBuilderInterface<Table, Column> 
   extends 
   CommonUtils<Column> {
     column(...columns: Column[]): this
   }
+
+  /**
+   * @interface InsertQueryBuilderInterface
+   * @description
+   * This interface is used for building INSERT queries and includes methods for specifying columns and values.
+   * @typeParam Table - The table to insert into.
+   * @typeParam Column - The type of column.
+   **/
 
   export interface InsertQueryBuilderInterface<Table, Column> 
   extends
@@ -73,6 +156,14 @@ namespace WrapperBuilders {
   Omit<CommonUtils<Column>, "where()"> {
     column(...columns: Column[]): this
   }
+
+  /**
+   * @interface UpdateQueryBuilderInterface
+   * @description
+   * This interface is used for building UPDATE queries and includes methods for specifying columns, values, and conditions.
+   * @typeParam Table - The table to update.
+   * @typeParam Column - The type of column.
+   **/
 
   export interface UpdateQueryBuilderInterface<Table, Column>
   extends

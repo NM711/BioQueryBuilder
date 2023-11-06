@@ -8,7 +8,7 @@ async function main () {
 
     const insertHello = await wrapper
     .insert("hello")
-    .column("num", "txt")
+    .column("num", "")
     .insertValues("1", "2")
     .execute()
 
