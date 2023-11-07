@@ -12,6 +12,38 @@ implements WrapperBuilders.SelectQueryBuilderInterface<Table, Column, Database> 
     super(table, executor)
   }
 
+  /**
+   * @method column
+   * @param ...options
+   * @type Column[]
+   * @description
+   * This method is meant to set the columns for a given sql query depending on what the value of the passed generic <Column> type is.
+   * For example a basic INSERT SQL Query would look like: INSERT INTO "table" (col1, col2, col3) VALUES ($1, $2, $3);
+   * Another example could be of a basic SELECT SQL query: SELECT (col1, col2, col3) FROM "table";
+   **/
+
+  public column(...columns: Column[]): this {
+    this.ingredients.columns = `(${columns.join(", ")})`
+    return this
+  }
+
+  /**
+   * @method where
+   * @param condition
+   * @type WrapperUtils.Condition<Column>
+   * @type WrapperUtils.Condition<Column>[]
+   * @description 
+   * Method used to construct a WHERE clause in SQL, ```sql
+   * SELECT * FROM table WHERE (condition) (operator) (value);
+   * ```
+   **/
+
+  public where(condition: WrapperUtils.Condition<Column> | WrapperUtils.Condition<Column>[]): this {
+    
+    this.buildCondition({ condition, conditionType: "WHERE", ingredientProp: "wheres" })
+    return this
+  } 
+
   public distinctOn(...column: string[] | Column[]): this {
     this.ingredients.distinct = `DISTINCT ON (${column.join(", ")})`
     return this
@@ -73,38 +105,10 @@ implements WrapperBuilders.SelectQueryBuilderInterface<Table, Column, Database> 
   }
 
   public async execute(): Promise<any> {
-    let query: string[] = ["SELECT"]
-
-    // now we need to glue all the ingredients together
-    // we would obviously strucutre the condition in the correct order
-    //
-    // example
-    // if (this.ingredients.where) {
-    //   query.push(this.ingredients.where)
-    // }
-    
-    const { distinct, columns, wheres, groupBy, havings, joins, limit, offset, orderBy  } = this.ingredients
-
-    if (distinct) query.push(distinct)
-    if (columns) query.push(columns)
-    
-    query.push(`FROM ${this.table}`)
-
-    if (joins) {
-      for (const j of joins) {
-        query.push(j)
-      }
-    }
-
-    if (wheres) query.push(wheres)
-    if (groupBy) query.push(groupBy)
-    if (havings) query.push(havings)
-    if (orderBy) query.push(orderBy)
-    if (limit) query.push(limit)
-    if (offset) query.push(offset)
+    const query: string = this.build([`SELECT FROM ${this.table}`])
     
     return await this.executor.execute({
-      query: query.join(" "),
+      query,
       values: this.values
     })
   }

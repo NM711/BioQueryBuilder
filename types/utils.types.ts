@@ -26,7 +26,8 @@ namespace WrapperUtils {
     orderBy: string | null
     limit: string | null
     offset: string | null
-    insertValues: string | null
+    actionValues: string | null
+    returning: string | null
     [key: string]: string | string[] | null
   }
 

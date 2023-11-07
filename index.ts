@@ -6,11 +6,25 @@ async function main () {
   try {
     const wrapper = new BioWrapper<DatabaseTypes.Database>(client)
 
-    const insertHello = await wrapper
+    const pushToHi = await wrapper
     .insert("hello")
-    .column("num", "")
-    .insertValues("1", "2")
+    .column("txt", "num")
+    .insertValues("hello world", "1")
+    .returning("txt")
     .execute()
+
+    const updateHi = await wrapper
+    .update("hello")
+    .column("txt")
+    .setValues("what is going on!")
+    .where({ column: "txt", operator: "=", value: 2 })
+    .returning("txt")
+    .execute()
+    
+    console.log(pushToHi, updateHi)
+
+    await wrapper.disconnect()
+
 
   } catch (e) {
      console.error(e)

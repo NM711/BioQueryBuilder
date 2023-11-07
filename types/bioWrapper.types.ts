@@ -27,8 +27,7 @@ namespace NBioWrapper {
   * You will only be able to get type support for the columns that are associated with the "hello" Table.
   */
 
-  export type SpecificTableColumn<DB, Table extends keyof DB> = `${Table & string}.${keyof DB[Table] & string}`
-  
+  export type SpecificTableColumn<DB, Table extends keyof DB> = keyof DB[Table]
   /** @interface WrapperBuilderDirector<Database = void>
    *  This is the main interface which will be implemented in the 
    *  WrapperBuilderDirector class which is in charge of calling all the SQL QueryBuilders.
@@ -44,7 +43,8 @@ namespace NBioWrapper {
   *  Column makes use of the AllColumns type to get all columns of all tables associated to a Database interface.
   * */ 
 
-    select <Table extends Extract<keyof Database, string>, Column = keyof AllColumns<Database>> 
+    select 
+    <Table extends Extract<keyof Database, string>, Column = AllColumns<Database>> 
     (table: Table):
     Omit<WrapperBuilders.SelectQueryBuilderInterface<Table, Column, Database>, "returning">
     
@@ -55,9 +55,9 @@ namespace NBioWrapper {
   *  Column grabs the keys of a databse tables columns in tge SpecificTableColumn<Database, Table> format
   * */ 
     insert
-    <Table extends Extract<keyof Database, string>, Column = keyof SpecificTableColumn<Database, Table>>
+    <Table extends Extract<keyof Database, string>, Column = SpecificTableColumn<Database, Table>>
     (table: Table):
-    WrapperBuilders.InsertQueryBuilderInterface<Table, Column>
+    Omit<WrapperBuilders.InsertQueryBuilderInterface<Table, Column>, "where">
 
   /**
   *  @field update<Table extends Extract<keyof Database, string>, Column extends keyof Database[Table]>
@@ -66,9 +66,16 @@ namespace NBioWrapper {
   *  Column grabs the keys of a databse tables columns in tge SpecificTableColumn<Database, Table> format
   * */ 
     update 
-    <Table extends Extract<keyof Database, string>, Column = keyof SpecificTableColumn<Database, Table>>
+    <Table extends Extract<keyof Database, string>, Column = SpecificTableColumn<Database, Table>>
     (table: Table):
     WrapperBuilders.UpdateQueryBuilderInterface<Table, Column>
+
+
+    delete
+    <Table extends Extract<keyof Database, string>, Column =  SpecificTableColumn<Database, Table>>
+    (table: Table):
+    WrapperBuilders.DeleteQueryBuilderInterface<Table, Column>
+
     raw(query: string, ...values: any[]): WrapperUtils.QueryAndValues
   }
 

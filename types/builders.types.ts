@@ -51,28 +51,8 @@ namespace WrapperBuilders {
    * @typeParam Column - The type of column.
    **/
 
-  export interface CommonUtils<Column = string> {
-    
-    /**
-     * @method where
-     * @description
-     * Specifies a WHERE condition for the query.
-     * @param condition - The WHERE condition to apply.
-     * @returns This query builder instance.
-     **/
+  export interface CommonUtils {
 
-    where(condition: WrapperUtils.Condition<Column> | WrapperUtils.Condition<Column>[]): this
-    
-    /**
-     * @method returning
-     * @description
-     * Specifies the columns to return in the query.
-     * @param columns - The columns to return.
-     * @returns This query builder instance.
-     **/
-
-    returning?(...columns: Column[]): this
-    
     /**
      * @method execute
      * @description
@@ -81,25 +61,6 @@ namespace WrapperBuilders {
      **/
 
     execute(): Promise<any>
-  }
-
-  /**
-   * @interface InsertAndUpdateValues
-   * @description
-   * This interface provides methods for inserting and updating values in queries.
-   **/
-
-  export interface InsertAndUpdateValues {
-
-    /**
-     * @method insertValues
-     * @description
-     * Specifies values to be inserted in the query.
-     * @param values - The values to insert.
-     * @returns This query builder instance.
-     */
-
-    insertValues(...values: string[]): this
   }
 
   // still need subqueries and CTEs
@@ -116,10 +77,10 @@ namespace WrapperBuilders {
 
   export interface SelectQueryBuilderInterface<Table, Column, Database>
   extends 
-  Joins<Database>,
-  Omit<CommonUtils<Column>, "returning()"> {
+  Joins<Database>{
     // inner workings still need to be documented
     column(...columns: Column[]): this
+    where(condition: WrapperUtils.Condition<Column> | WrapperUtils.Condition<Column>[]): this
     distinctOn(...column: Column[] | string[]): this
     orderBy (columns: Column[] | string[], order: SQLTypes.SQLOrderByOperators): this
     groupBy (...columns: Column[] | string[]): this
@@ -136,10 +97,9 @@ namespace WrapperBuilders {
    * @typeParam Column - The type of column.
    **/
 
-  export interface DeleteQueryBuilderInterface<Table, Column> 
-  extends 
-  CommonUtils<Column> {
-    column(...columns: Column[]): this
+  export interface DeleteQueryBuilderInterface<Table, Column> extends CommonUtils {
+    where(condition: WrapperUtils.Condition<Column> | WrapperUtils.Condition<Column>[]): this
+    returning(...columns: Column[]): this
   }
 
   /**
@@ -152,9 +112,18 @@ namespace WrapperBuilders {
 
   export interface InsertQueryBuilderInterface<Table, Column> 
   extends
-  InsertAndUpdateValues,
-  Omit<CommonUtils<Column>, "where()"> {
+  CommonUtils {
     column(...columns: Column[]): this
+    /**
+     * @method insertValues
+     * @description
+     * Specifies values to be inserted in the query.
+     * @param values - The values to insert.
+     * @returns This query builder instance.
+     */
+
+    insertValues(...values: any[]): this
+    returning(...columns: Column[]): this
   }
 
   /**
@@ -167,13 +136,11 @@ namespace WrapperBuilders {
 
   export interface UpdateQueryBuilderInterface<Table, Column>
   extends
-  InsertAndUpdateValues,
-  CommonUtils<Column> {
+  CommonUtils {
     column(...columns: Column[]): this
-  }
-
-  export interface BuilderUtils<Column> {
-    buildCondition(options: WrapperUtils.ConditionBuilderOptions<Column>): this
+    where(condition: WrapperUtils.Condition<Column> | WrapperUtils.Condition<Column>[]): this
+    setValues(...values: any[]): this
+    returning(...columns: Column[]): this
   }
 }
 
