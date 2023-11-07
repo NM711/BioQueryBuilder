@@ -9,14 +9,6 @@ class BioWrapperExecutor implements NBioWrapper.WrapperExecutor {
     this.client = client
   }
 
-  private async disconnect(): Promise<void> {
-    await this.client.end()
-  }
-
-  private async connect():Promise<void> {
-    await this.client.connect()
-  }
-
   async transaction(cb: () => Promise<any>): Promise<any> {
     try {
       await this.client.query("BEGIN")
@@ -32,7 +24,6 @@ class BioWrapperExecutor implements NBioWrapper.WrapperExecutor {
 
   async execute(qV: WrapperUtils.QueryAndValues | WrapperUtils.QueriesAndValues): Promise<any> {
     try {
-      await this.connect()
       // we are gonna check for any returned values, and give them to the user so he can do whatever with them after execution
       const returnQuery = async (query: string, values: any[]): Promise<any> => {
         const returned = await this.client.query(query, values)
@@ -50,8 +41,6 @@ class BioWrapperExecutor implements NBioWrapper.WrapperExecutor {
       } else return await returnQuery(qV.query, qV.values)
     } catch (e) {
       throw e
-    } finally {
-      await this.disconnect()
     }
   }
 

@@ -1,7 +1,7 @@
-class BioWrapperError extends Error {
+class BioQueryError extends Error {
   constructor (message: string) {
     super(message)
   }
 }
 
-export default BioWrapperError
+export default BioQueryError

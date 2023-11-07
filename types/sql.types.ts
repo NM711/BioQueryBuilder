@@ -18,7 +18,10 @@ namespace SQLTypes {
 
   /** @type SQLOrderByOperators Represents sorting operators for SQL's "ORDER BY" clause. */
   export type SQLOrderByOperators = "ASC" | "DESC";
+
+  /** @type PSQLSubQueryExpression Represents the available and valid expressions to form a subquery with in psql. */
+  export type PSQLSubQueryExpression = "EXIST" | "IN" | "NOT IN" | "SOME" | "ANY" | "ALL"
 }
 
-export default SQLTypes;
+export default SQLTypes
 

@@ -1,5 +1,4 @@
 import BioWrapperExecutor from "wrapper/executor"
-import type WrapperBuilders from "types/builders.types"
 import type WrapperUtils from "types/utils.types"
 
 
@@ -9,7 +8,7 @@ import type WrapperUtils from "types/utils.types"
  * these columns can be of ALL tables or Specified tables 
  **/
 
-class BuilderUtils<Column> implements WrapperBuilders.BuilderUtils<Column> {
+class BuilderUtils<Column> {
   protected table: string
   protected values: any[]
   protected ingredients: WrapperUtils.QueryIngredients
@@ -29,7 +28,8 @@ class BuilderUtils<Column> implements WrapperBuilders.BuilderUtils<Column> {
       orderBy: null,
       limit: null,
       offset: null,
-      insertValues: null
+      actionValues: null,
+      returning: null
     }
     this.values = []
     this.paramCounter = 0
@@ -40,11 +40,11 @@ class BuilderUtils<Column> implements WrapperBuilders.BuilderUtils<Column> {
   * @param options
   * @type WrapperUtils.ConditionBuilderOptions<Column>
   * @description
-  * Reusable method meant to generate conditions for the SQL WHERE clause or HAVING clause, it takes a parameter of options
+  * Reusable method meant to generate conditions for SQL, it takes a parameter of options
   * which is supposed to implement an interface with the given generic <Column> data.
   **/
 
-  public buildCondition(options: WrapperUtils.ConditionBuilderOptions<Column>): this {
+  protected buildCondition(options: WrapperUtils.ConditionBuilderOptions<Column>): this {
     const savedConditions: string[] = []
     const pusher = (query: string, value: any) => {
       savedConditions.push(query)
@@ -71,37 +71,39 @@ class BuilderUtils<Column> implements WrapperBuilders.BuilderUtils<Column> {
     return this
   }
 
- /**
- * @method column
- * @param ...options
- * @type Column[]
- * @description
- * This method is meant to set the columns for a given sql query depending on what the value of the passed generic <Column> type is.
- * For example a basic INSERT SQL Query would look like: INSERT INTO "table" (col1, col2, col3) VALUES ($1, $2, $3);
- * Another example could be of a basic SELECT SQL query: SELECT (col1, col2, col3) FROM "table";
- **/
+  protected build(query: string[]): string {
+    
+    // now we need to glue all the ingredients together
+    // we would obviously strucutre the condition in the correct order
+    //
+    // example
+    // if (this.ingredients.where) {
+    //   query.push(this.ingredients.where)
+    // }
+    
+    const { distinct, columns, wheres, groupBy, havings, joins, limit, offset, orderBy, actionValues, returning  } = this.ingredients
 
-  public column(...columns: Column[]): this {
-    this.ingredients.columns = `(${columns.join(", ")})`
-    return this
-  }
+    if (distinct) query.push(distinct)
+    if (columns) query.push(columns)
+    
+    if (query[0].startsWith("SELECT")) query.push(`FROM ${this.table}`)
 
-  /**
- * @method where
- * @param condition
- * @type WrapperUtils.Condition<Column>
- * @type WrapperUtils.Condition<Column>[]
- * @description 
- * This is method is to reuse and construct a WHERE sql clause across all builders, this is because it exists in almost every type of SQL
- * operation except the standalone INSERT.
- * The method takes a condition or conditions of a implemented interface which takes a generic type of Column, this information
- * is useful to the interface because then when I need to do something like "SELECT * FROM TABLE WHERE column = 'HI'" we know what columns
- * are available to us in that instance.
- **/
+    if (joins) {
+      for (const j of joins) {
+        query.push(j)
+      }
+    }
+    
+    if (actionValues) query.push(actionValues)
+    if (wheres) query.push(wheres)
+    if (returning) query.push(returning)
+    if (groupBy) query.push(groupBy)
+    if (havings) query.push(havings)
+    if (orderBy) query.push(orderBy)
+    if (limit) query.push(limit)
+    if (offset) query.push(offset)
 
-  public where(condition: WrapperUtils.Condition<Column> | WrapperUtils.Condition<Column>[]): this {
-    this.buildCondition({ condition, conditionType: "WHERE", ingredientProp: "wheres" })
-    return this
+    return query.join(" ")
   }
 }
 
