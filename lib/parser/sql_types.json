@@ -1,0 +1,13 @@
+{
+  "sql_types": {
+    "VARCHAR": "string",
+    "TEXT": "string",
+    "UUID": "string",
+    "TIMESTAMP": "string | Date",
+    "INTEGER": "number",
+    "INT": "number",
+    "SMALLINT": "number",
+    "BIGINT": "number",
+    "SERIAL": "number"
+  }
+}
