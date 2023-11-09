@@ -6,7 +6,8 @@
   "author": "NM711",
   "license": "MIT",
   "scripts": {
-    "start": "npx tsx index.ts"
+    "start": "npx tsx index.ts",
+    "generate": "npx tsx ./lib/parser/parse.ts"
   },
   "dependencies": {
     "@types/pg": "^8.10.7",
