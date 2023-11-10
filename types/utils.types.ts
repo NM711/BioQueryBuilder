@@ -1,6 +1,6 @@
 import type SQLTypes from "./sql.types"
 
-namespace WrapperUtils {
+namespace QueryBuilderUtils {
   export interface QueryAndValues {
     query: string,
     values: any[]
@@ -40,4 +40,4 @@ namespace WrapperUtils {
 
 }
 
-export default WrapperUtils
+export default QueryBuilderUtils

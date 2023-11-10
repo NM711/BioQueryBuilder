@@ -1,6 +1,5 @@
-import BioWrapperExecutor from "wrapper/executor"
-import type WrapperUtils from "types/utils.types"
-
+import BioWrapperExecutor from "bioquery/executor"
+import type QueryBuilderUtils from "types/utils.types"
 
 /**
  * @class BuilderUtils Reusable Builder Class Utils For All Query Builders
@@ -11,7 +10,7 @@ import type WrapperUtils from "types/utils.types"
 class BuilderUtils<Column> {
   protected table: string
   protected values: any[]
-  protected ingredients: WrapperUtils.QueryIngredients
+  protected ingredients: QueryBuilderUtils.QueryIngredients
   protected executor: BioWrapperExecutor
   protected paramCounter: number
 
@@ -38,13 +37,13 @@ class BuilderUtils<Column> {
  /**
   * @method buildCondition
   * @param options
-  * @type WrapperUtils.ConditionBuilderOptions<Column>
+  * @type QueryBuilderUtils.ConditionBuilderOptions<Column>
   * @description
   * Reusable method meant to generate conditions for SQL, it takes a parameter of options
   * which is supposed to implement an interface with the given generic <Column> data.
   **/
 
-  protected buildCondition(options: WrapperUtils.ConditionBuilderOptions<Column>): this {
+  protected buildCondition(options: QueryBuilderUtils.ConditionBuilderOptions<Column>): this {
     const savedConditions: string[] = []
     const pusher = (query: string, value: any) => {
       savedConditions.push(query)

@@ -1,8 +1,8 @@
-import type WrapperUtils from "types/utils.types";
-import type SQLTypes from "types/sql.types";
 import WrapperBuilders from "types/builders.types";
-import BioWrapperExecutor from "wrapper/executor";
+import BioWrapperExecutor from "bioquery/executor";
 import BuilderUtils from "./util";
+import type QueryBuilderUtils from "types/utils.types";
+import type SQLTypes from "types/sql.types";
 
 class SelectQueryBuilder<Table, Column, Database>
 extends BuilderUtils<Column>
@@ -38,7 +38,7 @@ implements WrapperBuilders.SelectQueryBuilderInterface<Table, Column, Database> 
    * ```
    **/
 
-  public where(condition: WrapperUtils.Condition<Column> | WrapperUtils.Condition<Column>[]): this {
+  public where(condition: QueryBuilderUtils.Condition<Column> | QueryBuilderUtils.Condition<Column>[]): this {
     
     this.buildCondition({ condition, conditionType: "WHERE", ingredientProp: "wheres" })
     return this
@@ -89,7 +89,7 @@ implements WrapperBuilders.SelectQueryBuilderInterface<Table, Column, Database> 
     return this
   }
 
-  public having(condition: WrapperUtils.Condition<Column> | WrapperUtils.Condition<Column>[]): this {
+  public having(condition: QueryBuilderUtils.Condition<Column> | QueryBuilderUtils.Condition<Column>[]): this {
     this.buildCondition({ condition, conditionType: "WHERE", ingredientProp: "havings" })
     return this
   }
