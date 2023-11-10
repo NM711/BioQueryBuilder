@@ -1,7 +1,7 @@
-import BioWrapperExecutor from "wrapper/executor";
+import BioWrapperExecutor from "bioquery/executor";
 import BuilderUtils from "./util";
 import type WrapperBuilders from "types/builders.types";
-import type WrapperUtils from "types/utils.types";
+import type QueryBuilderUtils from "types/utils.types";
 
 class InsertQueryBuilder<Table, Column> 
 extends BuilderUtils<Column>
@@ -40,15 +40,15 @@ implements WrapperBuilders.InsertQueryBuilderInterface<Table, Column>{
   /**
    * @method where
    * @param condition
-   * @type WrapperUtils.Condition<Column>
-   * @type WrapperUtils.Condition<Column>[]
+   * @type QueryBuilderUtils.Condition<Column>
+   * @type QueryBuilderUtils.Condition<Column>[]
    * @description 
    * Method used to construct a WHERE clause in SQL, ```sql
    * SELECT * FROM table WHERE (condition) (operator) (value);
    * ```
    **/
 
-  public where(condition: WrapperUtils.Condition<Column> | WrapperUtils.Condition<Column>[]): this {
+  public where(condition: QueryBuilderUtils.Condition<Column> | QueryBuilderUtils.Condition<Column>[]): this {
     this.buildCondition({ condition, conditionType: "WHERE", ingredientProp: "wheres" })
     return this
   }

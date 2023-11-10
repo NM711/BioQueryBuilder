@@ -1,9 +1,9 @@
 import type WrapperBuilders from "./builders.types"
-import type WrapperUtils from "./utils.types"
+import type QueryBuilderUtils from "./utils.types"
 
-/** @namespace NBioWrapper This namespace is meant to store some of the main types associated to the Builders Director and Executor */
+/** @namespace NBioQuery This namespace is meant to store some of the main types associated to the Builders Director and Executor */
 
-namespace NBioWrapper {
+namespace NBioQuery {
   /**
   * @type AllColumns<DB> This type is meant to take a generic type which we are expecting to be the Database interface, and then
   * we iterate over all the keys of every table under the Database interface. 
@@ -76,15 +76,18 @@ namespace NBioWrapper {
     (table: Table):
     WrapperBuilders.DeleteQueryBuilderInterface<Table, Column>
 
-    raw(query: string, ...values: any[]): WrapperUtils.QueryAndValues
+    raw(query: string, ...values: any[]): QueryBuilderUtils.QueryAndValues
+  
+    transaction(cb: () => Promise<any>): Promise<any>
+
+    disconnect(): Promise<void>
   }
 
-  /** @interface WrapperExecutor Outlines the structure of the WrapperExecutor class */
+  /** @interface QueryExecutor Outlines the structure of the BioQueryExecutor class */
 
-  export interface WrapperExecutor {
-    execute (qV: WrapperUtils.QueryAndValues | WrapperUtils.QueriesAndValues): Promise<any>
-    transaction (cb: () => Promise<any>): Promise<any>
+  export interface QueryExecutor {
+    execute (qV: QueryBuilderUtils.QueryAndValues | QueryBuilderUtils.QueriesAndValues): Promise<any>
   }
 }
 
-export default NBioWrapper
+export default NBioQuery

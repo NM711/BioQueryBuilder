@@ -1,28 +1,15 @@
-import type NBioWrapper from "types/bioWrapper.types";
+import NBioQuery from "types/bioquery.types";
 import type { Client } from "pg";
-import type WrapperUtils from "types/utils.types";
+import type QueryBuilderUtils from "types/utils.types";
 
-class BioWrapperExecutor implements NBioWrapper.WrapperExecutor {
+class BioQueryExecutor implements NBioQuery.QueryExecutor {
   private client: Client
 
   constructor (client: Client) {
     this.client = client
   }
 
-  async transaction(cb: () => Promise<any>): Promise<any> {
-    try {
-      await this.client.query("BEGIN")
-      await cb() 
-      await this.client.query("COMMIT")
-    } catch (e) {
-      await this.client.query("ROLLBACK")
-      console.error("Transaction Failed!")
-      // throw the error as to why upwards
-      throw e
-    }
-  }
-
-  async execute(qV: WrapperUtils.QueryAndValues | WrapperUtils.QueriesAndValues): Promise<any> {
+  async execute(qV: QueryBuilderUtils.QueryAndValues | QueryBuilderUtils.QueriesAndValues): Promise<any> {
     try {
       // we are gonna check for any returned values, and give them to the user so he can do whatever with them after execution
       const returnQuery = async (query: string, values: any[]): Promise<any> => {
@@ -46,4 +33,4 @@ class BioWrapperExecutor implements NBioWrapper.WrapperExecutor {
 
 }
 
-export default BioWrapperExecutor
+export default BioQueryExecutor

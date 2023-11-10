@@ -11,7 +11,7 @@ CREATE TABLE users (
 -- Creating a table for posts
 CREATE TABLE posts (
     post_id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES users(user_id),
+    user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
     title VARCHAR(255) NOT NULL,
     content TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

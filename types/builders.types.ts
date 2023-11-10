@@ -1,7 +1,6 @@
 import type SQLTypes from "./sql.types"
-import type WrapperUtils from "./utils.types"
-import type NBioWrapper from "./bioWrapper.types"
-
+import type QueryBuilderUtils from "./utils.types"
+import type NBioQuery from "./bioquery.types"
  /**
   * @namespace WrapperBuilders
   * @description
@@ -20,27 +19,27 @@ namespace WrapperBuilders {
   export interface Joins<Database> {
 
     innerJoin
-    <JoinTable extends Extract<keyof Database, string>, JoinColumn = NBioWrapper.SpecificTableColumn<Database, JoinTable>>
+    <JoinTable extends Extract<keyof Database, string>, JoinColumn = NBioQuery.SpecificTableColumn<Database, JoinTable>>
     (table: JoinTable, c1: JoinColumn, c2: string): this
 
 
     fullOuterJoin
-    <JoinTable extends Extract<keyof Database, string>, JoinColumn = NBioWrapper.SpecificTableColumn<Database, JoinTable>>
+    <JoinTable extends Extract<keyof Database, string>, JoinColumn = NBioQuery.SpecificTableColumn<Database, JoinTable>>
     (table: JoinTable, c1: JoinColumn, c2: string): this
 
 
     leftJoin
-    <JoinTable extends Extract<keyof Database, string>, JoinColumn = NBioWrapper.SpecificTableColumn<Database, JoinTable>>
+    <JoinTable extends Extract<keyof Database, string>, JoinColumn = NBioQuery.SpecificTableColumn<Database, JoinTable>>
     (table: JoinTable, c1: JoinColumn, c2: string): this
 
 
     rightJoin
-    <JoinTable extends Extract<keyof Database, string>, JoinColumn = NBioWrapper.SpecificTableColumn<Database, JoinTable>>
+    <JoinTable extends Extract<keyof Database, string>, JoinColumn = NBioQuery.SpecificTableColumn<Database, JoinTable>>
     (table: JoinTable, c1: JoinColumn, c2: string): this
 
 
     fullJoin
-    <JoinTable extends Extract<keyof Database, string>, JoinColumn = NBioWrapper.SpecificTableColumn<Database, JoinTable>>
+    <JoinTable extends Extract<keyof Database, string>, JoinColumn = NBioQuery.SpecificTableColumn<Database, JoinTable>>
     (table: JoinTable, c1: JoinColumn, c2: string): this
   }
 
@@ -80,11 +79,11 @@ namespace WrapperBuilders {
   Joins<Database>{
     // inner workings still need to be documented
     column(...columns: Column[]): this
-    where(condition: WrapperUtils.Condition<Column> | WrapperUtils.Condition<Column>[]): this
+    where(condition: QueryBuilderUtils.Condition<Column> | QueryBuilderUtils.Condition<Column>[]): this
     distinctOn(...column: Column[] | string[]): this
     orderBy (columns: Column[] | string[], order: SQLTypes.SQLOrderByOperators): this
     groupBy (...columns: Column[] | string[]): this
-    having(condition: WrapperUtils.Condition<Column> | WrapperUtils.Condition<Column>[]): this
+    having(condition: QueryBuilderUtils.Condition<Column> | QueryBuilderUtils.Condition<Column>[]): this
     limit (limit: number): this
     offset (offset: number): this
   }
@@ -98,7 +97,7 @@ namespace WrapperBuilders {
    **/
 
   export interface DeleteQueryBuilderInterface<Table, Column> extends CommonUtils {
-    where(condition: WrapperUtils.Condition<Column> | WrapperUtils.Condition<Column>[]): this
+    where(condition: QueryBuilderUtils.Condition<Column> | QueryBuilderUtils.Condition<Column>[]): this
     returning(...columns: Column[]): this
   }
 
@@ -138,7 +137,7 @@ namespace WrapperBuilders {
   extends
   CommonUtils {
     column(...columns: Column[]): this
-    where(condition: WrapperUtils.Condition<Column> | WrapperUtils.Condition<Column>[]): this
+    where(condition: QueryBuilderUtils.Condition<Column> | QueryBuilderUtils.Condition<Column>[]): this
     setValues(...values: any[]): this
     returning(...columns: Column[]): this
   }

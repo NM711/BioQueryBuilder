@@ -1,27 +1,36 @@
-import BioWrapper from "wrapper/director"
+import BioQuery from "bioquery/director"
 import client from "db"
-import type DatabaseTypes from "types/database.types"
+import type DATABASE from "database.types"
 
 async function main () {
   try {
-    const wrapper = new BioWrapper<DatabaseTypes.Database>(client)
-
-    const pushToHi = await wrapper
-    .insert("hello")
-    .column("txt", "num")
-    .insertValues("hello world", "1")
-    .returning("txt")
-    .execute()
-
-    const updateHi = await wrapper
-    .update("hello")
-    .column("txt")
-    .setValues("what is going on!")
-    .where({ column: "txt", operator: "=", value: 2 })
-    .returning("txt")
-    .execute()
+    const wrapper = new BioQuery<DATABASE>(client)
     
-    console.log(pushToHi, updateHi)
+    const createUser = await wrapper
+    .insert("users")
+    .column("username", "email", "password_hash")
+    .insertValues("randomUser123", "random@mail.com", "notAHash")
+    .returning("user_id")
+    .execute()
+    console.log(createUser)
+
+    await wrapper.transaction(async () => {
+    // run your code within the transacton
+      const pushToPosts = await wrapper
+      .insert("posts")
+      .column("user_id", "title", "content")
+      .insertValues(createUser[0].user_id, "hello title", "hello world")
+      .returning("created_at")
+      .execute()
+
+      const deleteUser = await wrapper.delete("users").where({
+        column: "username",
+        operator: "=",
+        value: "randomUser123"
+      })
+      .execute()
+
+    })
 
     await wrapper.disconnect()
 
