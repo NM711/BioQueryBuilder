@@ -76,10 +76,23 @@ namespace NBioQuery {
     (table: Table):
     WrapperBuilders.DeleteQueryBuilderInterface<Table, Column>
 
-    raw(query: string, ...values: any[]): QueryBuilderUtils.QueryAndValues
-  
-    transaction(cb: () => Promise<any>): Promise<any>
+    /**
+     * @field raw
+     * Raw field enables the ability to write a raw sql query.
+     **/
+    raw(query: string, ...values: any[]): Promise<any>
+    
 
+    /**
+     * @field transaction
+     * Transaction field enables the ability to encapsulate logic/queries within a database transaction.
+     **/
+    transaction(cb: () => Promise<any>): Promise<any>
+    
+    /**
+     * @field disconnect
+     * Disconnect field cuts connection between the application and database.
+     * */
     disconnect(): Promise<void>
   }
 
