@@ -6,7 +6,6 @@ import UpdateQueryBuilder from "builders/update"
 import type { Client } from "pg"
 import type NBioQuery from "types/bioquery.types"
 import type WrapperBuilders from "types/builders.types"
-import type QueryBuilderUtils from "types/utils.types"
 
 // <Database = void> makes the generic becomes optional (it defaults to void)
 
@@ -49,11 +48,8 @@ class BioQuery<Database = void> implements NBioQuery.WrapperBuilderDirector<Data
     return new DeleteQueryBuilder<Table, Column>(table, this.executor)
   }
 
-  public raw(query: string, ...values: any[]): QueryBuilderUtils.QueryAndValues {
-    return {
-      query,
-      values
-    }
+  public async raw(query: string, ...values: any[]): Promise<any> {
+    return await this.executor.execute({ query, values })
   }
 
   public async transaction(cb: () => Promise<any>): Promise<any> {
