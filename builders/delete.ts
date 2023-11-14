@@ -23,6 +23,17 @@ implements WrapperBuilders.DeleteQueryBuilderInterface<Table, Column> {
     return this
   }
 
+  
+  public in(column: Column, args: string | string[]): this {
+    this.buildIn(column, args, "IN", "ins")
+    return this
+  }
+
+  public notIn(column: Column, args: string | string[]): this {
+    this.buildIn(column, args, "NOT IN", "notIns")
+    return this
+  }
+
  /** @method returning
   *   @param column
   *   @type Column[]

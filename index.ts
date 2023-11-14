@@ -23,13 +23,14 @@ async function main () {
       .returning("created_at")
       .execute()
 
-      const deleteUser = await wrapper.delete("users").where({
+      const deleteUser = await wrapper.delete("users")
+      .where({
         column: "username",
         operator: "=",
         value: "randomUser123"
       })
+      .in("username", ["hello", "123", "dsadasd"])
       .execute()
-
     })
 
     await wrapper.disconnect()

@@ -28,6 +28,8 @@ namespace QueryBuilderUtils {
     offset: string | null
     actionValues: string | null
     returning: string | null
+    ins: string | null
+    notIns: string | null
     [key: string]: string | string[] | null
   }
 
@@ -37,7 +39,6 @@ namespace QueryBuilderUtils {
     conditionType: SQLTypes.ConditionType
     ingredientProp: "wheres" | "havings"
   }
-
 }
 
 export default QueryBuilderUtils

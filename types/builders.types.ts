@@ -1,3 +1,4 @@
+import SelectQueryBuilder from "builders/select"
 import type SQLTypes from "./sql.types"
 import type QueryBuilderUtils from "./utils.types"
 import type NBioQuery from "./bioquery.types"
@@ -74,6 +75,11 @@ namespace WrapperBuilders {
    * @typeParam Database - The database schema.
    **/
 
+  // we need to implement a build() method in the builder classes, this way we can effectively convert a query into a string
+  // without necessarily needing to execute it first.
+
+  type InOperatorParams = string | string[]
+
   export interface SelectQueryBuilderInterface<Table, Column, Database>
   extends 
   Joins<Database>{
@@ -81,11 +87,13 @@ namespace WrapperBuilders {
     column(...columns: Column[]): this
     where(condition: QueryBuilderUtils.Condition<Column> | QueryBuilderUtils.Condition<Column>[]): this
     distinctOn(...column: Column[] | string[]): this
-    orderBy (columns: Column[] | string[], order: SQLTypes.SQLOrderByOperators): this
-    groupBy (...columns: Column[] | string[]): this
+    orderBy(columns: Column[] | string[], order: SQLTypes.SQLOrderByOperators): this
+    groupBy(...columns: Column[] | string[]): this
     having(condition: QueryBuilderUtils.Condition<Column> | QueryBuilderUtils.Condition<Column>[]): this
-    limit (limit: number): this
-    offset (offset: number): this
+    limit(limit: number): this
+    offset(offset: number): this
+    in(column: Column, args: InOperatorParams): this
+    notIn(column: Column, args: InOperatorParams): this
   }
 
   /**
@@ -98,6 +106,8 @@ namespace WrapperBuilders {
 
   export interface DeleteQueryBuilderInterface<Table, Column> extends CommonUtils {
     where(condition: QueryBuilderUtils.Condition<Column> | QueryBuilderUtils.Condition<Column>[]): this
+    in(column: Column, args: InOperatorParams): this
+    notIn(column: Column, args: InOperatorParams): this
     returning(...columns: Column[]): this
   }
 
@@ -139,6 +149,8 @@ namespace WrapperBuilders {
     column(...columns: Column[]): this
     where(condition: QueryBuilderUtils.Condition<Column> | QueryBuilderUtils.Condition<Column>[]): this
     setValues(...values: any[]): this
+    in(column: Column, args: InOperatorParams): this
+    notIn(column: Column, args: InOperatorParams): this
     returning(...columns: Column[]): this
   }
 }

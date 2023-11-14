@@ -103,6 +103,16 @@ implements WrapperBuilders.SelectQueryBuilderInterface<Table, Column, Database> 
     this.ingredients.offset = `OFFSET ${offset}`
     return this
   }
+  
+  public in(column: Column, args: string | string[]): this {
+    this.buildIn(column, args, "IN", "ins")
+    return this
+  } 
+
+  public notIn(column: Column, args: string | string[]): this {
+    this.buildIn(column, args, "NOT IN", "notIns")
+    return this
+  }
 
   public async execute(): Promise<any> {
     const query: string = this.build([`SELECT FROM ${this.table}`])
@@ -114,5 +124,6 @@ implements WrapperBuilders.SelectQueryBuilderInterface<Table, Column, Database> 
   }
 
 }
+
 
 export default SelectQueryBuilder
