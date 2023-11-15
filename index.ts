@@ -12,7 +12,12 @@ async function main () {
     .insertValues("randomUser123", "random@mail.com", "notAHash")
     .returning("user_id")
     .execute()
-    console.log(createUser)
+
+    const selectUsers = wrapper
+    .select("users")
+    .column("users.username")
+    .where({ column: "users.email", operator: "=", value: "something@mail.com" })
+    .build() 
 
     await wrapper.transaction(async () => {
     // run your code within the transacton
@@ -23,13 +28,14 @@ async function main () {
       .returning("created_at")
       .execute()
 
-      const deleteUser = await wrapper.delete("users").where({
+      const deleteUser = await wrapper.delete("users")
+      .where({
         column: "username",
         operator: "=",
         value: "randomUser123"
       })
+      .in("username", selectUsers)
       .execute()
-
     })
 
     await wrapper.disconnect()

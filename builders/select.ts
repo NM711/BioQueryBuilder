@@ -7,9 +7,11 @@ import type SQLTypes from "types/sql.types";
 class SelectQueryBuilder<Table, Column, Database>
 extends BuilderUtils<Column>
 implements WrapperBuilders.SelectQueryBuilderInterface<Table, Column, Database> {
+  private initial: string[]
 
   constructor (table: string, executor: BioWrapperExecutor) {
     super(table, executor)
+    this.initial = [`SELECT`]
   }
 
   /**
@@ -103,10 +105,32 @@ implements WrapperBuilders.SelectQueryBuilderInterface<Table, Column, Database> 
     this.ingredients.offset = `OFFSET ${offset}`
     return this
   }
+  
+  public in(column: Column, args: string | string[]): this {
+    this.buildIn(column, args, "IN", "ins")
+    return this
+  } 
+
+  public notIn(column: Column, args: string | string[]): this {
+    this.buildIn(column, args, "NOT IN", "notIns")
+    return this
+  }
+
+  // helper
+  private columnChecker () {
+    if (!this.ingredients.columns) {
+      this.ingredients.columns = "*"
+    }
+  }
+
+  public build(): string {
+    this.columnChecker()
+    return this.queryBuild(this.initial, "FULL")
+  }
 
   public async execute(): Promise<any> {
-    const query: string = this.build([`SELECT FROM ${this.table}`])
-    
+    this.columnChecker()
+    const query: string = this.queryBuild(this.initial, "PARAM")
     return await this.executor.execute({
       query,
       values: this.values
