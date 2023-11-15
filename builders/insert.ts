@@ -6,9 +6,12 @@ import type QueryBuilderUtils from "types/utils.types";
 class InsertQueryBuilder<Table, Column> 
 extends BuilderUtils<Column>
 implements WrapperBuilders.InsertQueryBuilderInterface<Table, Column>{
+  
+  initial: string[]
 
   constructor (table: string, executor: BioWrapperExecutor) {
      super(table, executor)
+     this.initial = [`INSERT INTO ${this.table}`]
   }
 
    /**
@@ -33,7 +36,7 @@ implements WrapperBuilders.InsertQueryBuilderInterface<Table, Column>{
       this.values.push(val)
       builtValues.push(`$${this.paramCounter}`)
     }
-    this.ingredients.actionValues = `VALUES (${builtValues})`
+    this.ingredients.actionValues = `VALUES ( ${builtValues} )`
     return this
   }
 
@@ -65,9 +68,13 @@ implements WrapperBuilders.InsertQueryBuilderInterface<Table, Column>{
     return this
   }
 
+  public build(): string {
+    return this.queryBuild(this.initial, "FULL")
+  }
+
   public async execute(): Promise<any> {
     
-    const query: string = this.build([`INSERT INTO ${this.table}`])
+    const query: string = this.queryBuild(this.initial, "PARAM")
 
     return await this.executor.execute({
       query,

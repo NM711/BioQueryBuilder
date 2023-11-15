@@ -1,4 +1,3 @@
-import SelectQueryBuilder from "builders/select"
 import type SQLTypes from "./sql.types"
 import type QueryBuilderUtils from "./utils.types"
 import type NBioQuery from "./bioquery.types"
@@ -52,7 +51,7 @@ namespace WrapperBuilders {
    **/
 
   export interface CommonUtils {
-
+    build(): string
     /**
      * @method execute
      * @description

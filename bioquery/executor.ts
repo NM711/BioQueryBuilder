@@ -13,7 +13,6 @@ class BioQueryExecutor implements NBioQuery.QueryExecutor {
     try {
       // we are gonna check for any returned values, and give them to the user so he can do whatever with them after execution
       const returnQuery = async (query: string, values: any[]): Promise<any> => {
-        console.log(query, values)
         const returned = await this.client.query(query, values)
         const data = returned.rows
         if (data.length > 0 && data[0]) {

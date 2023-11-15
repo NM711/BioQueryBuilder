@@ -76,6 +76,21 @@ class BuilderUtils<Column> {
 
     return this
   }
+  
+ /**
+  * @method buildIn
+  * @param col 
+  * @type Column
+  * @param args
+  * @type string | string[]
+  * @param type
+  * @type "IN" | "NOT IN"
+  * @param prop
+  * @type "ins" | "notIns"
+  * @description
+  * Reusbale method that allows for the creation of a SQL "IN" or a "NOT IN" within the "WHERE" clause,
+  * works for all operations except "INSERT" because this operation does not support "WHERE" clauses.
+  */
 
   protected buildIn (col: Column, args: string | string[], type: "IN" | "NOT IN", prop: "ins" | "notIns") {
     let builtInQuery: string = ""
@@ -91,19 +106,37 @@ class BuilderUtils<Column> {
     
       // maybe add some regex checks to see if the pattern is matched: IN (values)
 
-      builtInQuery = `${col} ${type} (${inValues.join(", ")})`
+      builtInQuery = `${col} ${type} ( ${inValues.join(", ")} )`
     } else {
       console.log(args)
       if (!args.startsWith("SELECT")) throw new BioQueryError(`"${type}" has no values to match and has no nested "SELECT" query!`)
-      builtInQuery = `${col} ${type} (${args})`
+      builtInQuery = `${col} ${type} ( ${args} )`
     }
 
-    if (!this.ingredients["wheres"]) {
-      this.ingredients[prop] = builtInQuery
-    } else this.ingredients[prop] = `AND ${builtInQuery}`
+    if (!this.ingredients["wheres"]) this.ingredients[prop] = builtInQuery
+    else this.ingredients[prop] = `AND ${builtInQuery}`
   }
 
-  protected build(query: string[]): string {
+  protected fullBuild (query: string): string {
+
+    const splitQuery = query.split(" ")
+
+    for (let i = 0; i <= splitQuery.length; i++) {
+
+      if (!/\$\d/g.test(splitQuery[i])) continue
+    
+      const params = splitQuery[i].split("")
+
+      const paramNum = params[1]
+
+      params.splice(0, 2, this.values[Number(paramNum) - 1])
+      params[0] = `'${params[0]}'`
+      splitQuery[i] = params.join("")
+    }
+    return splitQuery.join(" ")
+  }
+
+  protected queryBuild(query: string[], mode: "FULL" | "PARAM" = "FULL"): string {
     
     // now we need to glue all the ingredients together
     // we would obviously strucutre the condition in the correct order
@@ -152,7 +185,20 @@ class BuilderUtils<Column> {
     if (limit) query.push(limit)
     if (offset) query.push(offset)
 
-    return query.join(" ")
+
+    // build mode,
+    // PARAM = param mode as in we build the query with the params example: "SELECT * FROM hello WHERE x = $1;"
+    // FULL = build the complete query, no params: "SELECT * FROM hello WHERE x = 'hello world';"
+    // defaults to FULL, because the method will be public facing.
+    
+    switch (mode) {
+      case "FULL":
+        return this.fullBuild(query.join(" "))
+      case "PARAM":
+        return query.join(" ")
+      default:
+        return "FAILED TO BUILD QUERY!"
+    }
   }
 }
 

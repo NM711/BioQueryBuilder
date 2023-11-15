@@ -2,11 +2,19 @@ import BuilderUtils from "./util";
 import BioQueryError from "bioquery/error";
 import type WrapperBuilders from "types/builders.types";
 import type QueryBuilderUtils from "types/utils.types";
+import BioQueryExecutor from "bioquery/executor";
 
 class UpdateQueryBuilder<Table, Column>
 extends BuilderUtils<Column>
 implements WrapperBuilders.UpdateQueryBuilderInterface<Table, Column> {
   
+  private initial: string[]
+
+  constructor(table: string, executor: BioQueryExecutor) {
+    super(table, executor)
+    this.initial = [`UPDATE ${this.table}`]
+  }
+
   public column(...columns: Column[]): this {
     this.ingredients.columns = columns.join(" ")
     return this
@@ -69,8 +77,12 @@ implements WrapperBuilders.UpdateQueryBuilderInterface<Table, Column> {
     return this
   }
 
-  async execute(): Promise<any> {
-    const query: string = this.build([`UPDATE ${this.table}`])
+  public build(): string {
+    return this.queryBuild(this.initial, "FULL")
+  }
+
+  public async execute(): Promise<any> {
+    const query: string = this.queryBuild(this.initial, "PARAM")
     
     return await this.executor.execute({
       query,

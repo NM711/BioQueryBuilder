@@ -7,9 +7,11 @@ import type SQLTypes from "types/sql.types";
 class SelectQueryBuilder<Table, Column, Database>
 extends BuilderUtils<Column>
 implements WrapperBuilders.SelectQueryBuilderInterface<Table, Column, Database> {
+  private initial: string[]
 
   constructor (table: string, executor: BioWrapperExecutor) {
     super(table, executor)
+    this.initial = [`SELECT FROM ${this.table}`]
   }
 
   /**
@@ -114,8 +116,12 @@ implements WrapperBuilders.SelectQueryBuilderInterface<Table, Column, Database> 
     return this
   }
 
+  public build(): string {
+    return this.queryBuild(this.initial, "FULL")
+  }
+
   public async execute(): Promise<any> {
-    const query: string = this.build([`SELECT FROM ${this.table}`])
+    const query: string = this.queryBuild(this.initial, "PARAM")
     
     return await this.executor.execute({
       query,

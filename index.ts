@@ -1,6 +1,12 @@
 import BioQuery from "bioquery/director"
 import client from "db"
 import type DATABASE from "database.types"
+/*
+* Goals
+* 1. build method, builds the query and returns the query string
+* 2. Support for AND and also OR clauses when calling IN.
+* */
+
 
 async function main () {
   try {
@@ -23,14 +29,14 @@ async function main () {
       .returning("created_at")
       .execute()
 
-      const deleteUser = await wrapper.delete("users")
+      const deleteUser = wrapper.delete("users")
       .where({
         column: "username",
         operator: "=",
         value: "randomUser123"
       })
       .in("username", ["hello", "123", "dsadasd"])
-      .execute()
+      .build()
     })
 
     await wrapper.disconnect()

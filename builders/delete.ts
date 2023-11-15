@@ -1,12 +1,20 @@
 import BuilderUtils from "./util";
 import type WrapperBuilders from "types/builders.types";
 import type QueryBuilderUtils from "types/utils.types";
+import BioQueryExecutor from "bioquery/executor";
 
 class DeleteQueryBuilder<Table, Column>
 extends BuilderUtils<Column>
 implements WrapperBuilders.DeleteQueryBuilderInterface<Table, Column> {
   
-  
+  private initial: string[]
+
+  constructor (table: string, executor: BioQueryExecutor) {
+    super(table, executor)
+
+    this.initial = [`DELETE FROM ${this.table}`]
+  }
+
   /**
    * @method where
    * @param condition
@@ -46,8 +54,12 @@ implements WrapperBuilders.DeleteQueryBuilderInterface<Table, Column> {
     return this
   }
 
+  public build (): string {
+    return this.queryBuild(this.initial, "FULL")
+  }
+
   async execute(): Promise<any> {
-   const query: string = this.build( [`DELETE FROM ${this.table}`])
+   const query: string = this.queryBuild(this.initial, "PARAM")
 
    return await this.executor.execute({
       query,
