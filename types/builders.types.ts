@@ -81,7 +81,8 @@ namespace WrapperBuilders {
 
   export interface SelectQueryBuilderInterface<Table, Column, Database>
   extends 
-  Joins<Database>{
+  Joins<Database>,
+  CommonUtils{
     // inner workings still need to be documented
     column(...columns: Column[]): this
     where(condition: QueryBuilderUtils.Condition<Column> | QueryBuilderUtils.Condition<Column>[]): this

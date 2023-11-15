@@ -11,7 +11,7 @@ implements WrapperBuilders.SelectQueryBuilderInterface<Table, Column, Database> 
 
   constructor (table: string, executor: BioWrapperExecutor) {
     super(table, executor)
-    this.initial = [`SELECT FROM ${this.table}`]
+    this.initial = [`SELECT`]
   }
 
   /**
@@ -116,13 +116,21 @@ implements WrapperBuilders.SelectQueryBuilderInterface<Table, Column, Database> 
     return this
   }
 
+  // helper
+  private columnChecker () {
+    if (!this.ingredients.columns) {
+      this.ingredients.columns = "*"
+    }
+  }
+
   public build(): string {
+    this.columnChecker()
     return this.queryBuild(this.initial, "FULL")
   }
 
   public async execute(): Promise<any> {
+    this.columnChecker()
     const query: string = this.queryBuild(this.initial, "PARAM")
-    
     return await this.executor.execute({
       query,
       values: this.values
@@ -130,6 +138,5 @@ implements WrapperBuilders.SelectQueryBuilderInterface<Table, Column, Database> 
   }
 
 }
-
 
 export default SelectQueryBuilder

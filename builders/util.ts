@@ -108,7 +108,6 @@ class BuilderUtils<Column> {
 
       builtInQuery = `${col} ${type} ( ${inValues.join(", ")} )`
     } else {
-      console.log(args)
       if (!args.startsWith("SELECT")) throw new BioQueryError(`"${type}" has no values to match and has no nested "SELECT" query!`)
       builtInQuery = `${col} ${type} ( ${args} )`
     }
@@ -149,6 +148,7 @@ class BuilderUtils<Column> {
     const { distinct, columns, wheres, groupBy, havings, joins, limit, offset, orderBy, actionValues, returning, notIns, ins } = this.ingredients
 
     if (distinct) query.push(distinct)
+    
     if (columns) query.push(columns)
     
     if (query[0].startsWith("SELECT")) query.push(`FROM ${this.table}`)
@@ -158,8 +158,9 @@ class BuilderUtils<Column> {
         query.push(j)
       }
     }
-    
+
     if (actionValues) query.push(actionValues)
+
     if (wheres) {
       const splitWhere = wheres.split(" ")
       switch (true) {
